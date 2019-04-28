@@ -9,13 +9,15 @@ import           Data.Char                      ( isAlpha
                                                 , isNumber
                                                 )
 import           Data.Either.Utils              ( maybeToEither )
-import           Data.Bifunctor                 ( first )
+import           Data.Bifunctor                 ( first
+                                                , bimap
+                                                )
   -- need to install MissingH and add missingh to package.yml
 simpleIOMain :: IO ()
 simpleIOMain = do
   args <- getArgs
   let path = maybeToEither "You must supply a file path!" . listToMaybe $ args
-  print $ "Log Path: " <> tshow (path :: Either Text Text)
+  printEitherPath $ (path :: Either Text Text)
   let getContentsFromPath :: Text -> IO (Either Text Text)
       getContentsFromPath =
         (map $ first (\e -> "Error: " <> tshow e))
@@ -43,6 +45,10 @@ findBefore (x                     : xs) = findBefore xs
 _ ==<< (Left  t) = pure $ Left t
 f ==<< (Right a) = f a
 
+printEitherPath :: Either Text Text -> IO()
+printEitherPath (Left a)  = print $ "Error: " <> a
+printEitherPath (Right a) = print $ "Log File Path: " <> a
+
 
 data Method = POST | GET | ERR deriving (Eq, Show, Read)
 
@@ -62,9 +68,6 @@ instance Show Event where
 parseEvent :: Text -> Either Text Event
 parseEvent ""  = Left "No Parse"
 parseEvent str = Event uname <$> time <*> method <*> pure path
-                -- (liftM2 Event uname) time method path
-
-
  where
   getUnameStr = T.filter (/= ' ') . T.takeWhile (/= '[')
   getMethodStr =
