@@ -3,15 +3,21 @@
 
 module SimpleIO where
 
+import           Prelude                        ( head )
 import           ClassyPrelude                  ( putStrLn
                                                 , IO
                                                 , print
                                                 , getArgs
+                                                , ($)
+                                                , (.)
+                                                , FilePath
                                                 )
+
+
 
 simpleIOMain :: IO ()
 simpleIOMain = do
-  args <- getArgs  -- gives use a list of arguments as a list of Text
-  print args -- calls show on the text, then outputs it and returns ()
+  args <- getArgs
+  putStrLn . head $ args  -- head gets the first item in the list
 
 
