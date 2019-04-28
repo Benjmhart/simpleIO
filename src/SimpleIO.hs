@@ -19,6 +19,6 @@ import           ClassyPrelude                  ( putStrLn
 simpleIOMain :: IO ()
 simpleIOMain = do
   args <- getArgs
-  print . listToMaybe $ args
+  path <- listToMaybe $ args
 
 
