@@ -57,7 +57,10 @@ simpleIOMain = do
 
 data Method = POST | Err deriving (Eq, Show, Read)
 
-data Event = Event Text Int Method Text deriving (Eq, Show, Read)
+data Event = Event Text Int Method Text deriving (Eq)
+
+instance Show Event where 
+  show (Event u t m p) = "Event " <> T.unpack u <> " " <> show t <> " " <> show m <> " " <> T.unpack p   
 
 parseEvent :: Text -> Maybe Event
 parseEvent ""  = Nothing
@@ -65,11 +68,12 @@ parseEvent str = Just $ Event uname time method path
  where
   getUnameStr = T.filter (/= ' ') . T.takeWhile (/= '[')
   getMethodStr =
-    T.takeWhile (isAlpha) . T.dropWhile (/= ' ') . T.dropWhile (/= ']')
-  getTimeStr  = T.takeWhile (/= ']') . T.drop 1 . T.drop (T.length uname)
-  getPath = T.dropWhile (/= '/')
-  uname       = getUnameStr str
-  time        = fromMaybe 0 $ readMay . getTimeStr $ str
-  method  = fromMaybe POST $ readMay . getMethodStr $ str
-  path    = getPath str
+    T.takeWhile (isAlpha) . T.dropWhile (== ' ') . drop 1 . T.dropWhile (/= ']')
+  getTimeStr = T.takeWhile (/= ']') . T.drop 1 . T.drop (T.length uname)
+  getPath    = T.dropWhile (/= '/')
+  uname      = getUnameStr str
+  time       = fromMaybe 0 $ readMay . getTimeStr $ str
+  method     = fromMaybe POST $ readMay . getMethodStr $ str
+  path       = getPath str
+
 
