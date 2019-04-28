@@ -26,6 +26,8 @@ library:
   source-dirs: src
   dependencies:
     - classy-prelude
+    - text
+    - MissingH
 
 executables:
   simpleio-exe:

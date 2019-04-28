@@ -44,7 +44,7 @@ bobby      [1100]    POST    /index.html
 bobby      [1100]    POST    /index.html
 bobby      [1100]    POST     index.html
 bobby      [1100]    POST    /index.html
-bobby[1100]POST/index.html
+bobby [1100] POST /index.html
 bobby      [1100]    POST    /index.html
 bobby      [1100]    POST    /index.html
 bobby      [1100]    POST    /index.html
@@ -56,4 +56,4 @@ bobby      [1100]    POST    /index.html
 bobby      [1100]    POST    /index.html
 Bobby      [1100]    POST    /index.html
 bobby      [700]     GET    /index.html
-System     [701]     ERROR
+System     [701]     ERR    /index
