@@ -3,7 +3,6 @@
 
 module SimpleIO where
 
-import           Prelude                        ( head )
 import           ClassyPrelude                  ( putStrLn
                                                 , IO
                                                 , print
