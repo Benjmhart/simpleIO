@@ -18,33 +18,23 @@ simpleIOMain = do
   print $ "Log Path: " <> tshow (path :: Either Text Text)
   let getContentsFromPath :: Text -> IO (Either Text Text)
       getContentsFromPath =
-        (map $ first (\_ -> "File read failed."))
+        (map $ first (\e -> "Error: " <> tshow e))
           . tryIOError
           . readFileUtf8
           . unpack
   fileContents <- getContentsFromPath ==<< (path)
-    -- This is a bit of a cheat  - to do this for without a custom operator,
-    -- Use a Monad Transformer
-  case fileContents of
-    Left  e -> print $ "Error: " <> tshow e
-    Right c -> do
-      let rows   = drop 1 $ T.lines c
-          events = catMaybes $ parseEvent <$> rows
-      case events of
-        [] -> print "No Events in log!"
-        xs -> do
-          let problem = findBefore xs
-          case problem of
-            Nothing -> putStrLn "Ain't no problem!"
-            Just p  -> do
-              print $ "the problem is: " <> tshow p
-              return ()
+  let rows    = drop 1 . T.lines <$> fileContents
+      events  = map rights $ parseEvent <$$> rows
+      problem = findBefore =<< events
+  print $ "Here's the problem " <> tshow problem
+  return ()
 
-findBefore :: [Event] -> Maybe Event
-findBefore []                           = Nothing
-findBefore (x : (Event _ _ ERR _) : _ ) = Just x
+findBefore :: [Event] -> Either Text Event
+findBefore []                           = Left "No Error Found in Log"
+findBefore (x : (Event _ _ ERR _) : _ ) = Right x
 findBefore (x                     : xs) = findBefore xs
 
+(<$$>) = map . map
 
 (==<<) -- 'nested bind'
   :: (Text -> IO (Either Text Text))
@@ -69,23 +59,10 @@ instance Show Event where
       <> " "
       <> T.unpack p
 
-parseEvent :: Text -> Maybe Event
-parseEvent ""  = Nothing
+parseEvent :: Text -> Either Text Event
+parseEvent ""  = Left "No Parse"
 parseEvent str = Event uname <$> time <*> method <*> pure path
                 -- (liftM2 Event uname) time method path
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
  where
@@ -96,7 +73,7 @@ parseEvent str = Event uname <$> time <*> method <*> pure path
     T.takeWhile isNumber . T.dropWhile (not . isNumber) . T.dropWhile (/= ' ')
   getPath = T.dropWhile (/= '/')
   uname   = getUnameStr str
-  time    = readMay . getTimeStr $ str
-  method  = readMay . getMethodStr $ str
+  time    = maybeToEither "No Parse" . readMay . getTimeStr $ str
+  method  = maybeToEither "No Parse" . readMay . getMethodStr $ str
   path    = getPath str
 
