@@ -12,8 +12,12 @@ import           ClassyPrelude                  ( putStrLn
                                                 , FilePath
                                                 , Maybe(..)
                                                 , (<>)
+                                                , readFileUtf8
+                                                , return
+                                                , unpack
                                                 , listToMaybe
                                                 )
+
 
 
 
@@ -23,6 +27,9 @@ simpleIOMain = do
   let path = listToMaybe $ args
   case path of
     Nothing -> putStrLn "You must supply a file path!"
-    Just x  -> putStrLn $ "Log Path: " <> x
+    Just x  -> do
+      putStrLn $ "Log Path: " <> x
+      fileContents <- readFileUtf8 . unpack $ x
+      return () -- we can read the file,  but we get an exception and we need to print it out, why do we need return here?
 
 
