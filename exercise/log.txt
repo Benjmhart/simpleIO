@@ -44,7 +44,7 @@ bobby      [1100]    POST    /index.html
 bobby      [1100]    POST    /index.html
 bobby      [1100]    POST     index.html
 bobby      [1100]    POST    /index.html
-bobby[1100]POST/index.html
+bobby [1100] POST /index.html
 bobby      [1100]    POST    /index.html
 bobby      [1100]    POST    /index.html
 bobby      [1100]    POST    /index.html

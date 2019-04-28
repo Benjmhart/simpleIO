@@ -3,7 +3,6 @@
 
 module SimpleIO where
 
-import           Prelude                        ( read )
 import           ClassyPrelude                  ( putStrLn
                                                 , IO
                                                 , print
@@ -21,14 +20,19 @@ import           ClassyPrelude                  ( putStrLn
                                                 , tryIOError
                                                 , listToMaybe
                                                 , drop
-                                                , String
+                                                , show
+                                                , readMay
+                                                , fromMaybe
+                                                , Text
                                                 , Eq
                                                 , Show
                                                 , Read
                                                 , Int
+                                                , (/=)
+                                                , (==)
                                                 )
 import qualified Data.Text                     as T
-  -- you need to add Text to package.yaml
+import           Data.Char                      ( isAlpha )
 
 
 simpleIOMain :: IO ()
@@ -49,9 +53,23 @@ simpleIOMain = do
           return ()
 
  -- test with ghci
-parseEvent :: String -> Event
-parseEvent = read
 
-data Method = Post | Err deriving (Eq, Show, Read)
 
-data Event = Event String Int Method String deriving (Eq, Show, Read)
+data Method = POST | Err deriving (Eq, Show, Read)
+
+data Event = Event Text Int Method Text deriving (Eq, Show, Read)
+
+parseEvent :: Text -> Maybe Event
+parseEvent ""  = Nothing
+parseEvent str = Just $ Event uname time method path
+ where
+  getUnameStr = T.filter (/= ' ') . T.takeWhile (/= '[')
+  getMethodStr =
+    T.takeWhile (isAlpha) . T.dropWhile (/= ' ') . T.dropWhile (/= ']')
+  getTimeStr  = T.takeWhile (/= ']') . T.drop 1 . T.drop (T.length uname)
+  getPath = T.dropWhile (/= '/')
+  uname       = getUnameStr str
+  time        = fromMaybe 0 $ readMay . getTimeStr $ str
+  method  = fromMaybe POST $ readMay . getMethodStr $ str
+  path    = getPath str
+
