@@ -12,5 +12,5 @@ import           ClassyPrelude                  ( putStrLn
  -- () - pronounced 'Unit'
 simpleIOMain :: IO ()
 simpleIOMain = putStrLn "Welcome to the Haskell Beginners class Exercise"
-  -- putStrLn, takes a string, outputs it to the terminal respecting newlines, and returns ()
+  -- putStrLn, takes Text, outputs it to the terminal respecting newlines, and returns ()
 
