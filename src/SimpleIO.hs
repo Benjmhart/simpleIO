@@ -37,8 +37,6 @@ findBefore (x : (Event _ _ ERR _) : _ ) = Just x
 findBefore (x                     : xs) = findBefore xs
 
 
--- t' x = trace ("\nmethod string: " <> (T.unpack $ x) <> "\n") x
-
 data Method = POST | GET | ERR deriving (Eq, Show, Read)
 
 data Event = Event Text Int Method Text deriving (Eq)
