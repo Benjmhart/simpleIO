@@ -11,6 +11,8 @@ import           ClassyPrelude                  ( putStrLn
                                                 , ($)
                                                 , (.)
                                                 , FilePath
+                                                , Maybe(..)
+                                                , (<>)
                                                 , listToMaybe
                                                 )
 
@@ -19,6 +21,9 @@ import           ClassyPrelude                  ( putStrLn
 simpleIOMain :: IO ()
 simpleIOMain = do
   args <- getArgs
-  path <- listToMaybe $ args
+  let path = listToMaybe $ args
+  case path of
+    Nothing -> putStrLn "You must supply a file path!"
+    Just x  -> putStrLn $ "Log Path: " <> x
 
 
