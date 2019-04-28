@@ -19,9 +19,14 @@ import           ClassyPrelude                  ( putStrLn
                                                 , unpack
                                                 , tryIOError
                                                 , listToMaybe
+                                                , String
+                                                , Eq
+                                                , Show
+                                                , Read
+                                                , Int
                                                 )
-
-
+import qualified Data.Text                     as T
+  -- you need to add Text to package.yaml
 
 
 simpleIOMain :: IO ()
@@ -36,6 +41,10 @@ simpleIOMain = do
       case fileContents of
         Left  e -> print $ "Error: " <> tshow e
         Right c -> do
-          putStrLn c
+          let rows = T.lines c
+          return ()
 
 
+data Method = Post | Err deriving (Eq, Show, Read)
+
+data Event = Event String Int Method String
