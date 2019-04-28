@@ -19,6 +19,7 @@ import           ClassyPrelude                  ( putStrLn
                                                 , unpack
                                                 , tryIOError
                                                 , listToMaybe
+                                                , drop
                                                 , String
                                                 , Eq
                                                 , Show
@@ -41,7 +42,9 @@ simpleIOMain = do
       case fileContents of
         Left  e -> print $ "Error: " <> tshow e
         Right c -> do
-          let rows = T.lines c
+             -- split file into lines and get rid of the header row
+          let rows = drop 1 $ T.lines c -- drop is safe, tail is not
+          -- we need to map a function over each row to parse it into our types
           return ()
 
 
