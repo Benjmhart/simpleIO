@@ -3,6 +3,7 @@
 
 module SimpleIO where
 
+import           Prelude                        ( read )
 import           ClassyPrelude                  ( putStrLn
                                                 , IO
                                                 , print
@@ -47,7 +48,10 @@ simpleIOMain = do
           -- we need to map a function over each row to parse it into our types
           return ()
 
+ -- test with ghci
+parseEvent :: String -> Event
+parseEvent = read
 
 data Method = Post | Err deriving (Eq, Show, Read)
 
-data Event = Event String Int Method String
+data Event = Event String Int Method String deriving (Eq, Show, Read)
