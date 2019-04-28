@@ -51,7 +51,7 @@ parseEvent str = Just $ Event uname time method path
   getUnameStr = T.filter (/= ' ') . T.takeWhile (/= '[')
   getMethodStr =
     T.takeWhile (isAlpha) . T.dropWhile (== ' ') . drop 1 . T.dropWhile (/= ']')
-  getTimeStr = T.takeWhile (/= ']') . T.drop 1 . T.drop (T.length uname)
+  getTimeStr = T.takeWhile isNumber . T.dropWhile (not . isNumber) . T.dropWhile (/=' ')
   getPath    = T.dropWhile (/= '/')
   uname      = getUnameStr str
   time       = fromMaybe 0 $ readMay . getTimeStr $ str
