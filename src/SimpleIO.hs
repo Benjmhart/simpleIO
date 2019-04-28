@@ -11,10 +11,13 @@ import           ClassyPrelude                  ( putStrLn
                                                 , (.)
                                                 , FilePath
                                                 , Maybe(..)
+                                                , Either(..)
                                                 , (<>)
+                                                , tshow
                                                 , readFileUtf8
                                                 , return
                                                 , unpack
+                                                , tryIOError
                                                 , listToMaybe
                                                 )
 
@@ -29,7 +32,10 @@ simpleIOMain = do
     Nothing -> putStrLn "You must supply a file path!"
     Just x  -> do
       putStrLn $ "Log Path: " <> x
-      fileContents <- readFileUtf8 . unpack $ x
-      return () -- we can read the file,  but we get an exception and we need to print it out, why do we need return here?
+      fileContents <- tryIOError . readFileUtf8 . unpack $ x
+      case fileContents of
+        Left  e -> print $ "Error: " <> tshow e
+        Right c -> do
+          putStrLn c
 
 
