@@ -27,6 +27,7 @@ library:
   dependencies:
     - classy-prelude
     - text
+    - MissingH
 
 executables:
   simpleio-exe:
