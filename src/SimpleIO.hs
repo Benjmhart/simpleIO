@@ -12,7 +12,7 @@ import           Data.Either.Utils              ( maybeToEither )
 import           Data.Bifunctor                 ( first
                                                 , bimap
                                                 )
-  -- need to install MissingH and add missingh to package.yml
+                                                
 simpleIOMain :: IO ()
 simpleIOMain = do
   args <- getArgs
@@ -79,4 +79,12 @@ parseEvent str = Event uname <$> time <*> method <*> pure path
   time    = maybeToEither "No Parse" . readMay . getTimeStr $ str
   method  = maybeToEither "No Parse" . readMay . getMethodStr $ str
   path    = getPath str
+=======
+
+
+
+ -- () - pronounced 'Unit'
+simpleIOMain :: IO ()
+simpleIOMain = putStrLn "Welcome to the Haskell Beginners class Exercise"
+  -- putStrLn, takes Text, outputs it to the terminal respecting newlines, and returns ()
 
