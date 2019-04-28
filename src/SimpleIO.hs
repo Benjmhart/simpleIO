@@ -18,6 +18,6 @@ import           ClassyPrelude                  ( putStrLn
 simpleIOMain :: IO ()
 simpleIOMain = do
   args <- getArgs
-  putStrLn . head $ args  -- head gets the first item in the list
+  putStrLn . head $ args -- head gets the first item in the list
 
 
