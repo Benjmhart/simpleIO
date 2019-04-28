@@ -57,6 +57,8 @@ instance Show Event where
 parseEvent :: Text -> Maybe Event
 parseEvent ""  = Nothing
 parseEvent str = Event uname <$> time <*> method <*> pure path
+                -- (liftM2 Event uname) time method path
+
  where
   getUnameStr = T.filter (/= ' ') . T.takeWhile (/= '[')
   getMethodStr =
