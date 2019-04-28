@@ -5,9 +5,13 @@ module SimpleIO where
 
 import           ClassyPrelude                  ( putStrLn
                                                 , IO
+                                                , print
+                                                , getArgs
                                                 )
 
 simpleIOMain :: IO ()
-simpleIOMain = putStrLn "Welcome to the Haskell Beginners class Exercise"
+simpleIOMain = do
+  args <- getArgs  -- gives use a list of arguments as a list of Text
+  print args -- calls show on the text, then outputs it and returns ()
 
 
