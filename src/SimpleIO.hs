@@ -10,7 +10,6 @@ import           Data.Char                      ( isAlpha
                                                 )
 import           Data.Either.Utils              ( maybeToEither )
 import           Data.Bifunctor                 ( first )
-import           Data.Foldable                  ( sequenceA_ )
 simpleIOMain :: IO ()
 simpleIOMain = do
   args <- getArgs
