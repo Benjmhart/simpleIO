@@ -8,7 +8,9 @@ import qualified Data.Text                     as T
 import           Data.Char                      ( isAlpha
                                                 , isNumber
                                                 )
-
+import           Data.Either.Utils              ( maybeToEither )
+import           Data.Bifunctor                 ( first )
+import           Data.Foldable                  ( sequenceA_ )
 simpleIOMain :: IO ()
 simpleIOMain = do
   args <- getArgs
@@ -16,26 +18,24 @@ simpleIOMain = do
   case path of
     Nothing -> putStrLn "You must supply a file path!"
     Just x  -> do
-      putStrLn $ "Log Path: " <> x
-      fileContents <- tryIOError . readFileUtf8 . unpack $ x
-      case fileContents of
-        Left  e -> print $ "Error: " <> tshow e
-        Right c -> do
-          let rows   = drop 1 $ T.lines c
-              events = catMaybes $ parseEvent <$> rows
-          case events of
-            [] -> print "No Events in log!"
-            xs -> do
-              let problem = findBefore xs
-              case problem of
-                Nothing -> putStrLn "Ain't no problem!"
-                Just p  -> do
-                  print $ "the problem is: " <> tshow p
-                  return ()
+      putStrLn $ "Log Path: " <> x -- this part up here is hard because types don't align
+      fileContents <- convertError . tryIOError . readFileUtf8 . unpack $ x
+      let rows    = drop 1 . T.lines <$> fileContents  -- Either Text [Text]
+          events  = map rights $ (parseEvent <$$> rows)
+          problem = findBefore =<< events
+      either (print) (print . ("Here's the problem" <>) . show) problem
+      return ()
 
-findBefore :: [Event] -> Maybe Event
-findBefore []                           = Nothing
-findBefore (x : (Event _ _ ERR _) : _ ) = Just x
+
+convertError =
+  (map $ first (\e -> "Error: problem opening file or invalid path"))
+
+(<$$>) = map . map
+
+
+findBefore :: [Event] -> Either Text Event
+findBefore []                           = Left "Ain't no problem!"
+findBefore (x : (Event _ _ ERR _) : _ ) = Right x
 findBefore (x                     : xs) = findBefore xs
 
 
@@ -54,11 +54,9 @@ instance Show Event where
       <> " "
       <> T.unpack p
 
-parseEvent :: Text -> Maybe Event
-parseEvent ""  = Nothing
+parseEvent :: Text -> Either Text Event
+parseEvent ""  = Left "No Parse"
 parseEvent str = Event uname <$> time <*> method <*> pure path
-                -- (liftM2 Event uname) time method path
-
  where
   getUnameStr = T.filter (/= ' ') . T.takeWhile (/= '[')
   getMethodStr =
@@ -67,7 +65,7 @@ parseEvent str = Event uname <$> time <*> method <*> pure path
     T.takeWhile isNumber . T.dropWhile (not . isNumber) . T.dropWhile (/= ' ')
   getPath = T.dropWhile (/= '/')
   uname   = getUnameStr str
-  time    = readMay . getTimeStr $ str
-  method  = readMay . getMethodStr $ str
+  time    = maybeToEither "No Parse" . readMay . getTimeStr $ str
+  method  = maybeToEither "No Parse" . readMay . getMethodStr $ str
   path    = getPath str
 
