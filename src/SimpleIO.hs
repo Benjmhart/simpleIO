@@ -26,7 +26,7 @@ simpleIOMain = do
   let rows    = drop 1 . T.lines <$> fileContents
       events  = map rights $ parseEvent <$$> rows
       problem = findBefore =<< events
-  print $ "Here's the problem " <> tshow problem
+  either (print) (print . ("Here's the problem: " <>) . show) problem
   return ()
 
 findBefore :: [Event] -> Either Text Event
@@ -63,6 +63,9 @@ parseEvent :: Text -> Either Text Event
 parseEvent ""  = Left "No Parse"
 parseEvent str = Event uname <$> time <*> method <*> pure path
                 -- (liftM2 Event uname) time method path
+
+
+
 
 
  where
