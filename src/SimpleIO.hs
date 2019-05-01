@@ -9,7 +9,6 @@ import           ClassyPrelude                  ( putStrLn
                                                 , getArgs
                                                 , ($)
                                                 , (.)
-                                                , FilePath
                                                 , listToMaybe
                                                 )
 
