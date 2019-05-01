@@ -23,6 +23,7 @@ import           ClassyPrelude                  ( putStrLn
                                                 , show
                                                 , readMay
                                                 , fromMaybe
+                                                , not
                                                 , Text
                                                 , Eq
                                                 , Show
@@ -32,7 +33,9 @@ import           ClassyPrelude                  ( putStrLn
                                                 , (==)
                                                 )
 import qualified Data.Text                     as T
-import           Data.Char                      ( isAlpha )
+import           Data.Char                      ( isAlpha
+                                                , isNumber
+                                                )
 
 
 simpleIOMain :: IO ()
@@ -59,8 +62,16 @@ data Method = POST | Err deriving (Eq, Show, Read)
 
 data Event = Event Text Int Method Text deriving (Eq)
 
-instance Show Event where 
-  show (Event u t m p) = "Event " <> T.unpack u <> " " <> show t <> " " <> show m <> " " <> T.unpack p   
+instance Show Event where
+  show (Event u t m p) =
+    "Event "
+      <> T.unpack u
+      <> " "
+      <> show t
+      <> " "
+      <> show m
+      <> " "
+      <> T.unpack p
 
 parseEvent :: Text -> Maybe Event
 parseEvent ""  = Nothing
@@ -69,9 +80,10 @@ parseEvent str = Just $ Event uname time method path
   getUnameStr = T.filter (/= ' ') . T.takeWhile (/= '[')
   getMethodStr =
     T.takeWhile (isAlpha) . T.dropWhile (== ' ') . drop 1 . T.dropWhile (/= ']')
-  getTimeStr = T.takeWhile isNumber . T.dropWhile (not . isNumber) . T.dropWhile (/=' ')
-  getPath    = T.dropWhile (/= '/')
-  uname      = getUnameStr str
-  time       = fromMaybe 0 $ readMay . getTimeStr $ str
-  method     = fromMaybe POST $ readMay . getMethodStr $ str
-  path       = getPath str
+  getTimeStr =
+    T.takeWhile isNumber . T.dropWhile (not . isNumber) . T.dropWhile (/= ' ')
+  getPath = T.dropWhile (/= '/')
+  uname   = getUnameStr str
+  time    = fromMaybe 0 $ readMay . getTimeStr $ str
+  method  = fromMaybe POST $ readMay . getMethodStr $ str
+  path    = getPath str
