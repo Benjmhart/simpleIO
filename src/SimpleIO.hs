@@ -78,12 +78,12 @@ parseEvent ""  = Nothing
 parseEvent str = Just $ Event uname time method path
  where
   getUnameStr = T.filter (/= ' ') . T.takeWhile (/= '[')
-  getMethodStr =
-    T.takeWhile (isAlpha) . T.dropWhile (== ' ') . drop 1 . T.dropWhile (/= ']')
+  uname       = getUnameStr str
   getTimeStr =
     T.takeWhile isNumber . T.dropWhile (not . isNumber) . T.dropWhile (/= ' ')
-  getPath = T.dropWhile (/= '/')
-  uname   = getUnameStr str
-  time    = fromMaybe 0 $ readMay . getTimeStr $ str
+  time = fromMaybe 0 $ readMay . getTimeStr $ str
+  getMethodStr =
+    T.takeWhile (isAlpha) . T.dropWhile (== ' ') . drop 1 . T.dropWhile (/= ']')
   method  = fromMaybe POST $ readMay . getMethodStr $ str
+  getPath = T.dropWhile (/= '/')
   path    = getPath str
