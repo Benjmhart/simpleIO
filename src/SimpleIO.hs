@@ -87,3 +87,6 @@ parseEvent str = Just $ Event uname time method path
   method  = fromMaybe POST $ readMay . getMethodStr $ str
   getPath = T.dropWhile (/= '/')
   path    = getPath str
+
+testvalue :: Text
+testvalue = "bobby      [1100]    POST    /334er4/index.html"

@@ -49,3 +49,6 @@ tests:
       - -with-rtsopts=-N
     dependencies:
       - simpleio
+      - hspec
+      - classy-prelude
+      - text
